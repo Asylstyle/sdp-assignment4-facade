@@ -16,5 +16,4 @@ Use the five annotated excerpts in REPORT.md as discussion prompts. Each partici
 should identify a tradeoff and an alternative rather than memorize a description.
 
 The original report outline is retained as a worksheet; the completed reference is REPORT.md.
-History contains real scaffold and implementation commits. Earlier incomplete scaffold
-notes describe earlier versions and are not evidence that the current implementation is unfinished.
+History contains real scaffold and implementation commits.
