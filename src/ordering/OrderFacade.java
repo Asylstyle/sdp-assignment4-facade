@@ -16,6 +16,7 @@ public class OrderFacade {
         this(new InventoryService(), new PaymentProcessor(), new ShippingService(),
                 new NotificationService(), Map.of("BOOK-1", 2500));
         inventory.addStock("BOOK-1", 5);
+        payments.declineCustomer("declined-customer");
     }
     /** Injection allows advanced clients to configure and inspect independent services. */
     public OrderFacade(InventoryService inventory, PaymentProcessor payments,
