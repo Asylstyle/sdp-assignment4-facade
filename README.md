@@ -1,50 +1,83 @@
-# SDP Assignment 4 — Facade learning scaffold
+# SDP Assignment 4: Facade reference project
 
-**Incomplete educational starting point. Not a finished assignment or submission.**
-The assignment allows AI examples and clarification, not replacement of independent work.
-Implement the TODOs yourself and write your own report using your actual code and evidence.
-
-Option B: online ordering. No external libraries, Maven, or Gradle are needed.
-The six public classes are under `src/ordering`. Ordinary `Client` uses only `OrderFacade`;
-advanced clients can use public subsystem classes directly. Subsystems have no facade back-references.
-All business operations currently throw `UnsupportedOperationException`; no real order is placed.
-The facade's fields show dependencies, but coordination and rollback are deliberately absent.
+A small Java 17 online-ordering example with four functional in-memory subsystems,
+a facade, dependency-free automated tests, UML, and a reference report.
+No external libraries, Maven, Gradle, database, or real financial services are required.
 
 ## Open and run
 
-Open this folder in VS Code: `code .`. A Java extension is optional for editor support;
-none is installed by this project. Use a JDK 17 terminal for the assignment's target runtime.
-In PowerShell, from this folder:
+Open this folder in VS Code (`code .`). From a PowerShell terminal in the project:
+
+```powershell
+./run.ps1
+./test.ps1
+```
+
+If local script execution is restricted, run the equivalent commands directly:
 
 ```powershell
 New-Item -ItemType Directory -Force out | Out-Null
-javac --release 17 -d out src/ordering/*.java
-if ($LASTEXITCODE -eq 0) { java -cp out ordering.Client }
+javac --release 17 -Xlint:all -d out src/ordering/*.java tests/ordering/*.java
+# Continue only if compilation succeeds:
+java -cp out ordering.Client
+java -cp out ordering.SubsystemTests
+java -cp out ordering.OrderFacadeTests
+java -cp out ordering.ValidationTests
 ```
 
-Expected scaffold output:
+Target: Java 17. Validation here used JDK 25.0.2 with `--release 17`, producing Java 17
+bytecode. An actual Java 17 runtime has not been tested; no software was installed.
+
+The default facade has five BOOK-1 units priced at 2500 cents each. The demo shows:
 
 ```text
-LEARNING SCAFFOLD: ordering and rollback are not implemented.
-TODO: implement OrderFacade.placeOrder independently.
+Successful order: SUCCESS - Order confirmed
+Shipment: SHIP-1
+Declined payment: PAYMENT_DECLINED - Payment declined; stock restored
+Insufficient stock: OUT_OF_STOCK - Insufficient stock
+Unknown product: UNKNOWN_PRODUCT - Unknown product
 ```
 
-Compilation only verifies the scaffold's syntax and Java 17 API/language compatibility.
-It does not establish assignment functionality. See `docs/VALIDATION.md` for actual checks.
+`declined-customer` is a configured simulation identifier. No real card details are used.
 
-## Rubric checklist — work still required
+## Design
 
-- [ ] At least three genuinely functional subsystems, each with observable behavior.
-- [ ] Small facade API with correct orchestration and clear outcomes.
-- [ ] Declined payment restores reserved inventory and creates no shipment or success confirmation.
-- [ ] Demonstrate success, decline, insufficient stock, and invalid input; record real results.
-- [ ] Write report: introduction, UML, five annotated clean-code excerpts, conclusion, repository URL.
-- [ ] Prepare personal defense and explain each design decision without reading a script.
+`Client` uses only `OrderFacade` and `OrderResult`. The facade exposes one ordering method.
+It validates input, calculates the price, reserves stock, charges payment, creates shipping,
+and records confirmation. Declined payment releases stock without shipping or confirmation.
+Unavailable shipping refunds payment and releases stock. Public subsystems are independently
+usable and have no facade references. Tests demonstrate advanced direct usage.
 
-Rubric: report 10%, working code 40%, personal defense 50%.
-Deadline supplied: 18 October 2026, 23:59 UTC+5 (18:59 UTC). Defense: Week 7.
-This scaffold does **not** claim to satisfy the functional rubric.
+- [Reference report with five annotated principles](docs/REPORT.md)
+- [Class UML](docs/UML.md) and [sequence UML](docs/SEQUENCES.md)
+- [Russian walkthrough and defense questions](docs/DEFENSE_RU.md)
+- [Actual validation evidence](docs/VALIDATION.md)
 
-Start with `docs/LEARNING_GUIDE.md`, then fill `docs/REPORT_OUTLINE.md` in your own words.
-Keep real incremental commits as you work. The desired 20–23 commits is a whole-project
-target, not a reason for empty commits, artificial splitting, or backdated history.
+## Requirements evidence
+
+| Requirement | Implementation/evidence |
+| --- | --- |
+| Java 17 | `--release 17`; class major version 61 |
+| At least three functional subsystems | Four: stock reservations, charge/refund records, shipments, confirmations |
+| Small facade API and correct sequence | `OrderFacade.placeOrder`; sequence UML and integration tests |
+| Declined-payment rollback | Restored stock, zero charge, zero shipments/confirmations checked by tests |
+| Advanced subsystem access | Public classes; direct-use subsystem tests; no facade back-references |
+| Clean code | Named units, focused responsibilities, shared validation, explicit results; annotated report excerpts |
+| Report | Introduction, UML links, five principles, verification, conclusion, repository link |
+| Personal defense | Walkthrough/questions supplied; understanding must be demonstrated by the presenter |
+
+The supplied rubric weights are report 10%, working code 40%, and personal defense 50%.
+Technical evidence does not predict a grade or guarantee institutional compliance.
+
+## Scope and limits
+
+This is a sequential, in-memory teaching example. State resets each run. It has no real bank,
+carrier, email delivery, authentication, persistence, concurrency control, or crash recovery.
+Compensation covers configured payment decline and the built-in shipping-unavailable failure;
+it is not a general distributed transaction mechanism. Direct advanced clients must coordinate
+their own operations and avoid concurrent stock edits during active reservations.
+Expected business failures return statuses; invalid arguments and amount overflow throw before
+order side effects. Unknown reservation completion/release is harmless; unknown refunds are rejected.
+
+Commit history records actual incremental work, including the original scaffold and its later
+implementation. No empty padding or backdating is used. No LMS submission is performed.
