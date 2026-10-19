@@ -69,15 +69,4 @@ usable and have no facade references. Tests demonstrate advanced direct usage.
 The supplied rubric weights are report 10%, working code 40%, and personal defense 50%.
 Technical evidence does not predict a grade or guarantee institutional compliance.
 
-## Scope and limits
 
-This is a sequential, in-memory teaching example. State resets each run. It has no real bank,
-carrier, email delivery, authentication, persistence, concurrency control, or crash recovery.
-Compensation covers configured payment decline and the built-in shipping-unavailable failure;
-it is not a general distributed transaction mechanism. Direct advanced clients must coordinate
-their own operations and avoid concurrent stock edits during active reservations.
-Expected business failures return statuses; invalid arguments and amount overflow throw before
-order side effects. Unknown reservation completion/release is harmless; unknown refunds are rejected.
-
-Commit history records actual incremental work, including the original scaffold and its later
-implementation. No empty padding or backdating is used. No LMS submission is performed.
